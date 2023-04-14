@@ -2,7 +2,7 @@ import './style.css';
 import {Map, View} from 'ol';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
 import {OSM, Vector as VectorSource} from 'ol/source.js';
-import Draw from "ol/interaction/Draw.js"
+import Draw from "ol/interaction/Draw"
 
 const raster = new TileLayer({
   source: new OSM()
@@ -12,15 +12,14 @@ const raster = new TileLayer({
 const vector = new VectorLayer({
   source: new VectorSource({
     wrapX: false
-  })
+  }),
 })
+
 
 const map = new Map({
   target: 'map',
   layers: [
-    new TileLayer({
-      source: new OSM()
-    })
+    raster, vector
   ],
   view: new View({
     center: [0, 0],
@@ -28,29 +27,31 @@ const map = new Map({
   })
 });
 
-// const typeSelect = document.getElementById('type');
+const typeSelect = document.getElementById('type');
 
 
-// let draw;
-// const addInteraction = () => {
-//   const value = typeSelect.value;
-//   if(value == 'None') {
-//     draw = new Draw({
-//       source: new VectorSource({
-//         wrapX: false
-//       }),
-//       type: typeSelect.value 
-//     }) 
-//     map.addInteraction(draw);
-//   }
-// }
-// typeSelect.onchange = function () {
-//   map.removeInteraction(draw);
-//   addInteraction();
-// };
+let draw;
+const initInteraction = () => {
+  const value = typeSelect.value;
+  // if not none then intialise draw
+  if(value !== 'None') {
+    draw = new Draw({
+      source: new VectorSource({
+        wrapX: false
+      }),
+      type: typeSelect.value 
+    }) 
+    // call addinter.. of map object
+    map.addInteraction(draw);
+  }
+}
+typeSelect.onchange = function () {
+  map.removeInteraction(draw);
+  initInteraction();
+};
 
-// document.getElementById('undo').addEventListener('click', function () {
-//   draw.removeLastPoint();
-// });
+document.getElementById('undo').addEventListener('click', function () {
+  draw.removeLastPoint();
+});
 
-// addInteraction() ;
+initInteraction() ;
